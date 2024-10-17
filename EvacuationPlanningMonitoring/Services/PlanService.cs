@@ -43,20 +43,26 @@ namespace EvacuationPlanningMonitoring.Services
             {
                 var nearestVehiclePair = timeBetweenZoneVehicle.OrderBy(x => x.Value).First();
                 var nearestVehicle = vehicles.FirstOrDefault(x => x.VehicleID == nearestVehiclePair.Key);
-                var remainPeople = people - nearestVehicle.Capacity;
-                var eta = (int)nearestVehiclePair.Value;
-                plans.Add(new EvacuationPlanDTO
+                if (nearestVehicle != null)
                 {
-                    ZoneID = zoneId,
-                    NumberOfPeople = remainPeople > 0 ? remainPeople : nearestVehicle.Capacity,
-                    VehicleID = nearestVehiclePair.Key,
-                    ETA = eta + " minutes"
-                });
-                timeBetweenZoneVehicle.Remove(nearestVehiclePair.Key);
-                if (remainPeople > 0)
-                {
-                    var recursivePlans = RecursiveAssign(timeBetweenZoneVehicle, remainPeople, vehicles, zoneId);
-                    plans.AddRange(recursivePlans);
+                    var remainPeople = people - nearestVehicle.Capacity;
+                    var eta = (int)nearestVehiclePair.Value;
+                    if (eta < 50)
+                    {
+                        plans.Add(new EvacuationPlanDTO
+                        {
+                            ZoneID = zoneId,
+                            NumberOfPeople = remainPeople > 0 ? nearestVehicle.Capacity : people,
+                            VehicleID = nearestVehiclePair.Key,
+                            ETA = eta + " minutes"
+                        });
+                        timeBetweenZoneVehicle.Remove(nearestVehiclePair.Key);
+                        if (remainPeople > 0)
+                        {
+                            var recursivePlans = RecursiveAssign(timeBetweenZoneVehicle, remainPeople, vehicles, zoneId);
+                            plans.AddRange(recursivePlans);
+                        }
+                    }
                 }
             }
             return plans;

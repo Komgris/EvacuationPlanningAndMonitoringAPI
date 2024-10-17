@@ -13,8 +13,8 @@ namespace EvacuationPlanningMonitoring.Services.Tests
         [Fact]
         public void EvacuationPlan()
         {
-            var zones = GenerateZone(5);
-            var vehicles = GenerateVehicles(3);
+            var zones = GenerateZone(3);
+            var vehicles = GenerateVehicles(4);
             var planService = new PlanService();
             var plans = planService.GeneratePlan(vehicles, zones);
             var sumCapacity = vehicles.Sum(x => x.Capacity);
@@ -29,12 +29,12 @@ namespace EvacuationPlanningMonitoring.Services.Tests
             var rnd = new Random();
             var locationCoordinate = new List<LocationCoordinatesDTO>()
             {
-                new LocationCoordinatesDTO() { Latitude = 13.7501555, Longitude = 100.5631574},
-                new LocationCoordinatesDTO() { Latitude = 13.7497441, Longitude = 100.5649323},
-                new LocationCoordinatesDTO() { Latitude = 13.7521694, Longitude = 100.5646969},
-                new LocationCoordinatesDTO() { Latitude = 13.7371752, Longitude = 100.5617332},
+                new LocationCoordinatesDTO() { Latitude = 13.7516046, Longitude = 100.6751537},
+                new LocationCoordinatesDTO() { Latitude = 13.5769205, Longitude = 100.6522948},
+                new LocationCoordinatesDTO() { Latitude = 13.5831999, Longitude = 100.6339376},
+                new LocationCoordinatesDTO() { Latitude = 13.6429856, Longitude = 100.5946448},
             };
-            for (int i = 1; i <= amount; i++)
+            for (int i = 0; i < amount; i++)
             {
                 vehicles.Add(new VehicleModel()
                 {
@@ -63,7 +63,7 @@ namespace EvacuationPlanningMonitoring.Services.Tests
                 new LocationCoordinatesDTO() { Latitude = 13.7473681, Longitude = 100.5677069},
                 new LocationCoordinatesDTO() { Latitude = 13.7499582, Longitude = 100.5625157},
             };
-            for (int i = 1; i <= amount; i++)
+            for (int i = 0; i < amount; i++)
             {
                 zones.Add(new EvacuationZoneModel()
                 {
