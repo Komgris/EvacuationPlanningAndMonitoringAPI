@@ -10,5 +10,28 @@ namespace EvacuationPlanningMonitoring.Controllers
     [ApiController]
     public class EvacuationsController : ControllerBase
     {
+        [HttpGet("status")]
+        public IActionResult GetStatus()
+        {
+            return Ok(new List<EvacuationStatusDTO>());
+        }
+
+        [HttpPost("plan")]
+        public IActionResult Plan()
+        {
+            return Ok(new List<EvacuationPlanDTO>());
+        }
+
+        [HttpPut("update")]
+        public IActionResult Update()
+        {
+            return Ok(new EvacuationStatusDTO());
+        }
+
+        [HttpDelete("clear")]
+        public IActionResult Clear()
+        {
+            return Ok();
+        }
     }
 }
