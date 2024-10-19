@@ -20,13 +20,19 @@ namespace EvacuationPlanningMonitoring.Repositorys
             var oldPlans = await GetPlan();
             foreach (var plan in plans)
             {
-                var isDuplicatePlan = oldPlans
-                    .Any(x => x.VehicleID == plan.VehicleID &&
+                var duplicatePlan = oldPlans
+                    .FirstOrDefault(x => x.VehicleID == plan.VehicleID &&
                     x.ZoneID == plan.ZoneID &&
                     x.NumberOfPeople == plan.NumberOfPeople);
-                if (!isDuplicatePlan)
+                if (duplicatePlan == null)
                 {
                     Add(plan);
+                }
+                else
+                {
+                    duplicatePlan.ETAMin = plan.ETAMin;
+                    duplicatePlan.NumberOfPeople = plan.NumberOfPeople;
+                    Update(duplicatePlan);
                 }
             }
             await SaveChangesAsync();

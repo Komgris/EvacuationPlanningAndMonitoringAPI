@@ -6,6 +6,7 @@ namespace EvacuationPlanningMonitoring.Services.Interfaces
     public interface IEvacuationService
     {
         Task GeneratePlan();
+        Task Create(EvacuationZoneDTO zoneDto);
         Task<List<EvacuationPlanDTO>> GetPlan();
     }
 }

@@ -14,3 +14,4 @@ namespace EvacuationPlanningMonitoring.Repositorys
         public DbSet<VehicleModel> Vehicles { get; set; }
     }
 }
+

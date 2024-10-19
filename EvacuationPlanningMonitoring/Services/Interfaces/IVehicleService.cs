@@ -5,6 +5,6 @@ namespace EvacuationPlanningMonitoring.Services.Interfaces
 {
     public interface IVehicleService
     {
-        void Create(VehicleDTO vehicleDTO);
+        Task Create(VehicleDTO vehicleDTO);
     }
 }

@@ -21,9 +21,19 @@ namespace EvacuationPlanningMonitoring.Services
             _planService = planService;
             _evacuationPlanRepository= evacuationPlanRepository;
         }
-        public async Task CreateZone(EvacuationZoneModel zone)
+        public async Task Create(EvacuationZoneDTO zoneDto)
         {
-
+            var zone = new EvacuationZoneModel()
+            {
+                ZoneID = zoneDto.ZoneID,
+                RemainPeople = zoneDto.NumberOfPeople,
+                NumberOfPeople = zoneDto.NumberOfPeople,
+                UrgencyLevel = zoneDto.UrgencyLevel,
+                Latitude = zoneDto.LocationCoordinates.Latitude,
+                Longitude = zoneDto.LocationCoordinates.Longitude
+            };
+            await _zoneRepository.Create(zone);
+            await GeneratePlan();
         }
 
         public async Task GeneratePlan()

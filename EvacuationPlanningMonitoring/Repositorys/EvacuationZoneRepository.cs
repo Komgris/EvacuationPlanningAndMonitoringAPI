@@ -8,6 +8,12 @@ namespace EvacuationPlanningMonitoring.Repositorys
     {
         public EvacuationZoneRepository(AppDbContext dbContext) : base(dbContext) { }
 
+        public async Task Create(EvacuationZoneModel zone)
+        {
+            Add(zone);
+            await SaveChangesAsync();
+        }
+
         public Task<List<EvacuationZoneModel>> GetNotCompleteZone()
         {
            var zones = GetQueryable().Where(x=>x.RemainPeople > 0).ToListAsync();

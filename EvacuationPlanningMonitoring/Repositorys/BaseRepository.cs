@@ -36,7 +36,7 @@ namespace EvacuationPlanningMonitoring.Repositorys
             return await _context.Set<TEntity>().FirstOrDefaultAsync(predicate, cancellationToken: cancellationToken);
         }
 
-        public void Update<T>(TEntity entity)
+        public void Update(TEntity entity)
         {
             _context.Entry(entity).State = EntityState.Modified;
         }

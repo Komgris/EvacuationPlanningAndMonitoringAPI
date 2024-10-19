@@ -8,12 +8,14 @@ namespace EvacuationPlanningMonitoring.Services
     public class VehicleService : IVehicleService
     {
         private readonly IVehicleRepository _vehicleRepository;
-        public VehicleService(IVehicleRepository vehicleRepository)
+        private readonly IEvacuationService _evacuationService;
+        public VehicleService(IVehicleRepository vehicleRepository, IEvacuationService evacuationService)
         {
             _vehicleRepository = vehicleRepository;
+            _evacuationService= evacuationService;
         }
 
-        public void Create(VehicleDTO vehicleDTO)
+        public async Task Create(VehicleDTO vehicleDTO)
         {
             var vehicle = new VehicleModel()
             {
@@ -24,8 +26,8 @@ namespace EvacuationPlanningMonitoring.Services
                 Latitude = vehicleDTO.LocationCoordinates.Latitude,
                 Longitude = vehicleDTO.LocationCoordinates.Longitude
             };
-            _vehicleRepository.Add(vehicle);
-            _vehicleRepository.Save();
+            await _vehicleRepository.Create(vehicle);
+            await _evacuationService.GeneratePlan();
         }
     }
 }

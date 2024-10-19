@@ -1,7 +1,13 @@
-﻿namespace EvacuationPlanningMonitoring.Models.DbModels
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace EvacuationPlanningMonitoring.Models.DbModels
 {
+    [Table("vehicle")]
     public class VehicleModel
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Key]
         public int ID { get; set; }
         public string VehicleID { get; set; } = string.Empty;
         public int Capacity { get; set; }

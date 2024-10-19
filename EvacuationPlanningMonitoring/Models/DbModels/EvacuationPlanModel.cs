@@ -1,10 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EvacuationPlanningMonitoring.Models.DbModels
 {
     [Table("evacuation_plan")]
     public class EvacuationPlanModel
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Key]
+        public int ID { get; set; }
         public string ZoneID { get; set; } = "";
         public string VehicleID { get; set; } = "";
         public string Message { get; set; } = "";

@@ -1,5 +1,7 @@
 ﻿using EvacuationPlanningMonitoring.Models.DbModels;
 using EvacuationPlanningMonitoring.Models.DTOs;
+using EvacuationPlanningMonitoring.Repositorys.Interfaces;
+using EvacuationPlanningMonitoring.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,10 +11,17 @@ namespace EvacuationPlanningMonitoring.Controllers
     [ApiController]
     public class VehiclesController : ControllerBase
     {
-        [HttpPost]
-        public IActionResult Create(VehicleDTO vehicleDTO)
+        private readonly IVehicleService _vehicleService;
+        public VehiclesController(IVehicleService vehicleService) 
         {
-            return Ok(new VehicleModel());
+            _vehicleService = vehicleService;
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create(VehicleDTO vehicleDTO)
+        {
+            await _vehicleService.Create(vehicleDTO);
+            return Ok();
         }
     }
 }
