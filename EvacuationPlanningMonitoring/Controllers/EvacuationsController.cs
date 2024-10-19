@@ -10,6 +10,13 @@ namespace EvacuationPlanningMonitoring.Controllers
     [ApiController]
     public class EvacuationsController : ControllerBase
     {
+        private readonly IEvacuationService _evacuationService;
+        public EvacuationsController(
+            IEvacuationService evacuationService
+            ) { 
+            _evacuationService= evacuationService;
+        }
+
         [HttpGet("status")]
         public IActionResult GetStatus()
         {
@@ -17,9 +24,10 @@ namespace EvacuationPlanningMonitoring.Controllers
         }
 
         [HttpPost("plan")]
-        public IActionResult Plan()
+        public async Task<IActionResult> Plan()
         {
-            return Ok(new List<EvacuationPlanDTO>());
+            var plan = await _evacuationService.GetPlan();
+            return Ok(plan);
         }
 
         [HttpPut("update")]

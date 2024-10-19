@@ -6,10 +6,10 @@ namespace EvacuationPlanningMonitoring.Services
 {
     public class PlanService : IPlanService
     {
-        public List<EvacuationPlanDTO> GeneratePlan(List<VehicleModel> vehicles, List<EvacuationZoneModel> evacuationZones)
+        public List<EvacuationPlanModel> GeneratePlan(List<VehicleModel> vehicles, List<EvacuationZoneModel> evacuationZones)
         {
             var helperService = new HelperService();
-            var plans = new List<EvacuationPlanDTO>();
+            var plans = new List<EvacuationPlanModel>();
             var sortedZones = evacuationZones.OrderByDescending(x => x.UrgencyLevel).ToList();
             var sortedVehicle = vehicles.OrderByDescending(x => x.Capacity).ToList();
             foreach (var zone in sortedZones)
@@ -17,7 +17,7 @@ namespace EvacuationPlanningMonitoring.Services
                 var timeBetweenZoneVehicle = new Dictionary<string, double>();
                 foreach (var vehicle in sortedVehicle)
                 {
-                    if (zone.NumberOfPeople > 0 && vehicle.Capacity > 0)
+                    if (zone.RemainPeople > 0 && vehicle.Capacity > 0)
                     {
                         // Store Distance between Zone And Vehicle
                         var distance = helperService.GetDistanceFromLatLonInKm(zone.Latitude, zone.Longitude, vehicle.Latitude, vehicle.Longitude);
@@ -25,7 +25,7 @@ namespace EvacuationPlanningMonitoring.Services
                         timeBetweenZoneVehicle.Add(vehicle.VehicleID, estTime);
                     }
                 }
-                var recursivePlans = RecursiveAssign(timeBetweenZoneVehicle, zone.NumberOfPeople, vehicles, zone.ZoneID);
+                var recursivePlans = RecursiveAssign(timeBetweenZoneVehicle, zone.RemainPeople, vehicles, zone.ZoneID);
                 if (recursivePlans.Count > 0)
                 {
                     var usedVehicle = recursivePlans.Select(plan => plan.VehicleID).ToList();
@@ -36,9 +36,9 @@ namespace EvacuationPlanningMonitoring.Services
             return plans;
         }
 
-        private List<EvacuationPlanDTO> RecursiveAssign(Dictionary<string, double> timeBetweenZoneVehicle, int people, List<VehicleModel> vehicles, string zoneId)
+        private List<EvacuationPlanModel> RecursiveAssign(Dictionary<string, double> timeBetweenZoneVehicle, int people, List<VehicleModel> vehicles, string zoneId)
         {
-            var plans = new List<EvacuationPlanDTO>();
+            var plans = new List<EvacuationPlanModel>();
             if (timeBetweenZoneVehicle.Count > 0)
             {
                 var nearestVehiclePair = timeBetweenZoneVehicle.OrderBy(x => x.Value).First();
@@ -49,12 +49,12 @@ namespace EvacuationPlanningMonitoring.Services
                     var eta = (int)nearestVehiclePair.Value;
                     if (eta < 50)
                     {
-                        plans.Add(new EvacuationPlanDTO
+                        plans.Add(new EvacuationPlanModel
                         {
                             ZoneID = zoneId,
                             NumberOfPeople = remainPeople > 0 ? nearestVehicle.Capacity : people,
                             VehicleID = nearestVehiclePair.Key,
-                            ETA = eta + " minutes"
+                            ETAMin = eta,
                         });
                         timeBetweenZoneVehicle.Remove(nearestVehiclePair.Key);
                         if (remainPeople > 0)

@@ -16,7 +16,7 @@ namespace EvacuationPlanningMonitoring.Repositorys
             _entity = _context.Set<TEntity>();
         }
 
-        public TEntity Add<T>(TEntity entity)
+        public virtual TEntity Add(TEntity entity)
         {
             return _context.Set<TEntity>().Add(entity).Entity;
         }

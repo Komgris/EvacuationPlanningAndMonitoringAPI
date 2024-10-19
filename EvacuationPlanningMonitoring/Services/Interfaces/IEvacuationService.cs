@@ -1,9 +1,11 @@
-﻿using EvacuationPlanningMonitoring.Models.DTOs;
+﻿using EvacuationPlanningMonitoring.Models.DbModels;
+using EvacuationPlanningMonitoring.Models.DTOs;
 
 namespace EvacuationPlanningMonitoring.Services.Interfaces
 {
     public interface IEvacuationService
     {
-        Task<List<EvacuationPlanDTO>> GeneratePlan();
+        Task GeneratePlan();
+        Task<List<EvacuationPlanDTO>> GetPlan();
     }
 }

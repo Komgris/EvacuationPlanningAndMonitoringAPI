@@ -1,4 +1,5 @@
-﻿using EvacuationPlanningMonitoring.Models.DTOs;
+﻿using EvacuationPlanningMonitoring.Models.DbModels;
+using EvacuationPlanningMonitoring.Models.DTOs;
 using EvacuationPlanningMonitoring.Repositorys.Interfaces;
 using EvacuationPlanningMonitoring.Services.Interfaces;
 
@@ -9,18 +10,46 @@ namespace EvacuationPlanningMonitoring.Services
         private readonly IEvacuationZoneRepository _zoneRepository;
         private readonly IVehicleRepository _vehicleRepository;
         private readonly IPlanService _planService;
-        public EvacuationService(IEvacuationZoneRepository zoneRepository, IPlanService planService, IVehicleRepository vehicleRepository) 
+        private readonly IEvacuationPlanRepository _evacuationPlanRepository;
+        public EvacuationService(IEvacuationZoneRepository zoneRepository, 
+            IPlanService planService, 
+            IVehicleRepository vehicleRepository,
+            IEvacuationPlanRepository evacuationPlanRepository) 
         {
             _zoneRepository = zoneRepository;
             _vehicleRepository = vehicleRepository;
             _planService = planService;
+            _evacuationPlanRepository= evacuationPlanRepository;
         }
-        public async Task<List<EvacuationPlanDTO>> GeneratePlan()
+        public async Task CreateZone(EvacuationZoneModel zone)
+        {
+
+        }
+
+        public async Task GeneratePlan()
         {
             var zones = await _zoneRepository.GetNotCompleteZone();
             var vehicles = await _vehicleRepository.GetAvaiableVehicle();
             var plans = _planService.GeneratePlan(vehicles, zones);
-            throw new NotImplementedException();
+            await _evacuationPlanRepository.SavePlan(plans);
+        }
+
+        public async Task<List<EvacuationPlanDTO>> GetPlan()
+        {
+            var plans = await _evacuationPlanRepository.GetPlan();
+            var planDtos = new List<EvacuationPlanDTO>();
+            foreach (var plan in plans)
+            {
+                planDtos.Add(new EvacuationPlanDTO()
+                {
+                    ZoneID = plan.ZoneID,
+                    VehicleID = plan.VehicleID,
+                    Message = plan.Message,
+                    ETA = plan.ETAMin + " minutes",
+                    NumberOfPeople = plan.NumberOfPeople,
+                });
+            }
+            return planDtos;
         }
     }
 }
