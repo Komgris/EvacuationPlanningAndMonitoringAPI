@@ -1,50 +1,44 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using EvacuationPlanningMonitoring.Models.DbModels;
+using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
+using System.Threading;
 
 namespace EvacuationPlanningMonitoring.Repositorys
 {
     public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : class
     {
         private readonly AppDbContext _context;
-        private readonly DbSet<TEntity> _dbSet;
+        private readonly DbSet<TEntity> _entity;
 
         public BaseRepository(AppDbContext context)
         {
             _context = context;
-            _dbSet = _context.Set<TEntity>();
+            _entity = _context.Set<TEntity>();
         }
 
-        public IEnumerable<TEntity> GetAll()
+        public TEntity Add<T>(TEntity entity)
         {
-            return _dbSet.ToList();
+            return _context.Set<TEntity>().Add(entity).Entity;
         }
 
-        public TEntity GetById(int id)
+        public IQueryable<TEntity> GetQueryable()
         {
-            return _dbSet.Find(id);
+            return _entity.AsQueryable();
         }
 
-        public void Add(TEntity entity)
+        public Task SaveChangesAsync()
         {
-            _dbSet.Add(entity);
+            return _context.SaveChangesAsync();
         }
 
-        public void Update(TEntity entity)
+        public async Task<TEntity?> FindFirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken)
+        {
+            return await _context.Set<TEntity>().FirstOrDefaultAsync(predicate, cancellationToken: cancellationToken);
+        }
+
+        public void Update<T>(TEntity entity)
         {
             _context.Entry(entity).State = EntityState.Modified;
-        }
-
-        public void Delete(int id)
-        {
-            var entity = _dbSet.Find(id);
-            if (entity != null)
-            {
-                _dbSet.Remove(entity);
-            }
-        }
-
-        public void Save()
-        {
-            _context.SaveChanges();
         }
     }
 }

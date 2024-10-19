@@ -4,6 +4,7 @@
     {
         public int ID { get; set;}
         public string ZoneID { get; set;} = string.Empty;
+        public int RemainPeople { get; set;}
         public int NumberOfPeople { get; set; }
         public int UrgencyLevel { get; set; }
         public double Latitude { get; set; }

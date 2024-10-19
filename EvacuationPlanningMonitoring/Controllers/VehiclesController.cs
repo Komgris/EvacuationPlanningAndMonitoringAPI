@@ -10,7 +10,7 @@ namespace EvacuationPlanningMonitoring.Controllers
     public class VehiclesController : ControllerBase
     {
         [HttpPost]
-        public IActionResult Create()
+        public IActionResult Create(VehicleDTO vehicleDTO)
         {
             return Ok(new VehicleModel());
         }
