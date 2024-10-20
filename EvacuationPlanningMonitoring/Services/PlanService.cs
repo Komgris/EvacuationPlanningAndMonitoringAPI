@@ -14,7 +14,7 @@ namespace EvacuationPlanningMonitoring.Services
             var sortedVehicle = vehicles.OrderByDescending(x => x.Capacity).ToList();
             foreach (var zone in sortedZones)
             {
-                var timeBetweenZoneVehicle = new Dictionary<string, double>();
+                Dictionary<string, (double eta, int capacity)> timeBetweenZoneVehicle = new Dictionary<string, (double, int)>();
                 var inprogressPeople = alreadyPlan.Where(x => x.ZoneID == zone.ZoneID).Sum(x => x.NumberOfPeople);
                 //not include plan that inprogress
                 var unplanPeople = zone.RemainPeople - inprogressPeople;
@@ -25,7 +25,7 @@ namespace EvacuationPlanningMonitoring.Services
                         // Store Distance between Zone And Vehicle
                         var distance = helperService.GetDistanceFromLatLonInKm(zone.Latitude, zone.Longitude, vehicle.Latitude, vehicle.Longitude);
                         var estTime = helperService.GetTimeFromVelocityAndDistancInMinute(distance, vehicle.Speed);
-                        timeBetweenZoneVehicle.Add(vehicle.VehicleID, estTime);
+                        timeBetweenZoneVehicle.Add(vehicle.VehicleID, (estTime,vehicle.Capacity));
                     }
                 }
                 var recursivePlans = RecursiveAssign(timeBetweenZoneVehicle, unplanPeople, vehicles, zone.ZoneID);
@@ -39,17 +39,17 @@ namespace EvacuationPlanningMonitoring.Services
             return plans;
         }
 
-        private List<EvacuationPlanModel> RecursiveAssign(Dictionary<string, double> timeBetweenZoneVehicle, int people, List<VehicleModel> vehicles, string zoneId)
+        private List<EvacuationPlanModel> RecursiveAssign(Dictionary<string, (double eta, int capacity)> timeBetweenZoneVehicle, int people, List<VehicleModel> vehicles, string zoneId)
         {
             var plans = new List<EvacuationPlanModel>();
             if (timeBetweenZoneVehicle.Count > 0)
             {
-                var nearestVehiclePair = timeBetweenZoneVehicle.OrderBy(x => x.Value).First();
+                var nearestVehiclePair = timeBetweenZoneVehicle.OrderByDescending(x => x.Value.capacity).ThenBy(x=>x.Value.eta).First();
                 var nearestVehicle = vehicles.FirstOrDefault(x => x.VehicleID == nearestVehiclePair.Key);
                 if (nearestVehicle != null)
                 {
                     var remainPeople = people - nearestVehicle.Capacity;
-                    var eta = (int)nearestVehiclePair.Value;
+                    var eta = (int)nearestVehiclePair.Value.eta;
                     if (eta < 50)
                     {
                         plans.Add(new EvacuationPlanModel
