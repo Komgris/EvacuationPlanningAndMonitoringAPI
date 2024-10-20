@@ -20,13 +20,9 @@ namespace EvacuationPlanningMonitoring.Repositorys
             {
                 plan.Status = status;
                 Update(plan);
-                await SaveChangesAsync();
-                return plan;
             }
-            else
-            {
-                return plan;
-            }
+            await SaveChangesAsync();
+            return plan;
         }
 
         public async Task ClearPlan()
@@ -53,22 +49,14 @@ namespace EvacuationPlanningMonitoring.Repositorys
 
         public async Task SavePlan(List<EvacuationPlanModel> plans)
         {
-            var oldPlans = await GetPlan();
+            var oldPlans = await GetQueryable().Where(x => x.Status == EvacuationPlanStatus.Ready).ToListAsync();
+            foreach(var oldPlan in oldPlans)
+            {
+                Delete(oldPlan);
+            }
             foreach (var plan in plans)
             {
-                var duplicatePlan = oldPlans
-                    .FirstOrDefault(x => x.VehicleID == plan.VehicleID);
-                if (duplicatePlan == null)
-                {
-                    Add(plan);
-                }
-                else
-                {
-                    duplicatePlan.ZoneID= plan.ZoneID;
-                    duplicatePlan.ETAMin = plan.ETAMin;
-                    duplicatePlan.NumberOfPeople = plan.NumberOfPeople;
-                    Update(duplicatePlan);
-                }
+                Add(plan);
             }
             await SaveChangesAsync();
         }
