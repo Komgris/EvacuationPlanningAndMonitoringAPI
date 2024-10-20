@@ -1,9 +1,11 @@
 ﻿
 
+using EvacuationPlanningMonitoring.Models;
 using EvacuationPlanningMonitoring.Models.DbModels;
 using EvacuationPlanningMonitoring.Models.DTOs;
 using EvacuationPlanningMonitoring.Services.Interfaces;
 using Moq;
+using System.Numerics;
 using Xunit;
 
 namespace EvacuationPlanningMonitoring.Services.Tests
@@ -15,12 +17,29 @@ namespace EvacuationPlanningMonitoring.Services.Tests
         {
             var zones = GenerateZone(3);
             var vehicles = GenerateVehicles(4);
+            var planned = GenerateOldPlan(1);
             var planService = new PlanService();
-            var plans = planService.GeneratePlan(vehicles, zones);
+            var plans = planService.GeneratePlan(vehicles, zones, planned);
             var sumCapacity = vehicles.Sum(x => x.Capacity);
             var planPeople = plans.Sum(x => x.NumberOfPeople);
             Assert.True(planPeople <= sumCapacity);
             Assert.True(plans.Count > 0);
+        }
+
+        private List<EvacuationPlanModel> GenerateOldPlan(int amount)
+        {
+            var plans = new List<EvacuationPlanModel>();
+            for (int i = 0; i < amount; i++)
+            {
+                plans.Add(new EvacuationPlanModel
+                {
+                    ZoneID = "Z" + i,
+                    VehicleID = "V" + i,
+                    NumberOfPeople = 5,
+                    Status = EvacuationPlanStatus.InProgress
+                });
+            }
+            return plans;
         }
 
         private List<VehicleModel> GenerateVehicles(int amount)

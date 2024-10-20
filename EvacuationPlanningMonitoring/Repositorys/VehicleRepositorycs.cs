@@ -9,6 +9,17 @@ namespace EvacuationPlanningMonitoring.Repositorys
     {
         public VehicleRepositorycs(AppDbContext dbContext) : base(dbContext) { }
 
+        public async Task ChangeVehicleStatus(string vehicleID, string status)
+        {
+            var vehicle = await GetQueryable().Where(x => x.VehicleID == vehicleID).FirstOrDefaultAsync();
+            if (vehicle != null)
+            {
+                vehicle.Status = status;
+                Update(vehicle);
+                await SaveChangesAsync();
+            }
+        }
+
         public async Task Create(VehicleModel vehicle)
         {
             Add(vehicle);

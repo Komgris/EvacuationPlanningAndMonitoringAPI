@@ -14,10 +14,28 @@ namespace EvacuationPlanningMonitoring.Repositorys
             await SaveChangesAsync();
         }
 
-        public Task<List<EvacuationZoneModel>> GetNotCompleteZone()
+        public async Task<List<EvacuationZoneModel>> GetNotCompleteZone()
         {
-           var zones = GetQueryable().Where(x=>x.RemainPeople > 0).ToListAsync();
+           var zones = await GetQueryable().Where(x=>x.RemainPeople > 0).ToListAsync();
             return zones;
+        }
+
+        public async Task<List<EvacuationZoneModel>> GetAll()
+        {
+            var zones = await GetQueryable().ToListAsync();
+            return zones;
+        }
+
+        public async Task EvcuationDone(EvacuationPlanModel plan)
+        {
+            var zone = await GetQueryable().FirstOrDefaultAsync(x => x.ZoneID == plan.ZoneID);
+            if(zone != null)
+            {
+                var remainPeople = zone.NumberOfPeople - plan.NumberOfPeople;
+                zone.RemainPeople = remainPeople;
+                Update(zone);
+                await SaveChangesAsync();
+            }
         }
     }
 }

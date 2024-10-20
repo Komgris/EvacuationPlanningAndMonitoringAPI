@@ -7,5 +7,6 @@ namespace EvacuationPlanningMonitoring.Repositorys.Interfaces
     {
         Task<List<VehicleModel>> GetAvaiableVehicle();
         Task Create(VehicleModel vehicle);
+        Task ChangeVehicleStatus(string vehicle, string status);
     }
 }

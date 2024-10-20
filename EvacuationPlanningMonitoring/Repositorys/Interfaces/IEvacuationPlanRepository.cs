@@ -6,5 +6,7 @@ namespace EvacuationPlanningMonitoring.Repositorys.Interfaces
     {
         Task SavePlan(List<EvacuationPlanModel> plans);
         Task<List<EvacuationPlanModel>> GetPlan();
+        Task<List<EvacuationPlanModel>> GetPlanInProgress();
+        Task<EvacuationPlanModel> ChangeStatusPlan(string zoneId, string vehicle, string status);
     }
 }

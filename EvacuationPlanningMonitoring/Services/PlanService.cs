@@ -6,7 +6,7 @@ namespace EvacuationPlanningMonitoring.Services
 {
     public class PlanService : IPlanService
     {
-        public List<EvacuationPlanModel> GeneratePlan(List<VehicleModel> vehicles, List<EvacuationZoneModel> evacuationZones)
+        public List<EvacuationPlanModel> GeneratePlan(List<VehicleModel> vehicles, List<EvacuationZoneModel> evacuationZones, List<EvacuationPlanModel> alreadyPlan)
         {
             var helperService = new HelperService();
             var plans = new List<EvacuationPlanModel>();
@@ -15,9 +15,12 @@ namespace EvacuationPlanningMonitoring.Services
             foreach (var zone in sortedZones)
             {
                 var timeBetweenZoneVehicle = new Dictionary<string, double>();
+                var inprogressPeople = alreadyPlan.Where(x => x.ZoneID == zone.ZoneID).Sum(x => x.NumberOfPeople);
+                //not include plan that inprogress
+                var unplanPeople = zone.RemainPeople - inprogressPeople;
                 foreach (var vehicle in sortedVehicle)
                 {
-                    if (zone.RemainPeople > 0 && vehicle.Capacity > 0)
+                    if (unplanPeople > 0 && vehicle.Capacity > 0)
                     {
                         // Store Distance between Zone And Vehicle
                         var distance = helperService.GetDistanceFromLatLonInKm(zone.Latitude, zone.Longitude, vehicle.Latitude, vehicle.Longitude);
@@ -25,7 +28,7 @@ namespace EvacuationPlanningMonitoring.Services
                         timeBetweenZoneVehicle.Add(vehicle.VehicleID, estTime);
                     }
                 }
-                var recursivePlans = RecursiveAssign(timeBetweenZoneVehicle, zone.RemainPeople, vehicles, zone.ZoneID);
+                var recursivePlans = RecursiveAssign(timeBetweenZoneVehicle, unplanPeople, vehicles, zone.ZoneID);
                 if (recursivePlans.Count > 0)
                 {
                     var usedVehicle = recursivePlans.Select(plan => plan.VehicleID).ToList();
@@ -67,5 +70,7 @@ namespace EvacuationPlanningMonitoring.Services
             }
             return plans;
         }
+
+
     }
 }

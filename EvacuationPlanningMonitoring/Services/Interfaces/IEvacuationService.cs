@@ -8,5 +8,7 @@ namespace EvacuationPlanningMonitoring.Services.Interfaces
         Task GeneratePlan();
         Task Create(EvacuationZoneDTO zoneDto);
         Task<List<EvacuationPlanDTO>> GetPlan();
+        Task<List<EvacuationStatusDTO>> GetStatus();
+        Task UpdateStatus(UpdateEvcuationStatusDto status);
     }
 }

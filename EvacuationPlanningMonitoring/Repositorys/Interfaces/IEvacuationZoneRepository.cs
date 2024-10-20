@@ -6,5 +6,7 @@ namespace EvacuationPlanningMonitoring.Repositorys.Interfaces
     {
         Task Create(EvacuationZoneModel zone);
         Task<List<EvacuationZoneModel>> GetNotCompleteZone();
+        Task<List<EvacuationZoneModel>> GetAll();
+        Task EvcuationDone(EvacuationPlanModel plan);
     }
 }

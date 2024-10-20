@@ -18,22 +18,24 @@ namespace EvacuationPlanningMonitoring.Controllers
         }
 
         [HttpGet("status")]
-        public IActionResult GetStatus()
+        public async Task<IActionResult> GetStatus()
         {
-            return Ok(new List<EvacuationStatusDTO>());
+            var status = await _evacuationService.GetStatus();
+            return Ok(status);
         }
 
         [HttpPost("plan")]
         public async Task<IActionResult> Plan()
         {
-            var plan = await _evacuationService.GetPlan();
-            return Ok(plan);
+            var plans = await _evacuationService.GetPlan();
+            return Ok(plans);
         }
 
         [HttpPut("update")]
-        public IActionResult Update()
+        public async Task<IActionResult> Update([FromBody]UpdateEvcuationStatusDto status)
         {
-            return Ok(new EvacuationStatusDTO());
+            await _evacuationService.UpdateStatus(status);
+            return Ok();
         }
 
         [HttpDelete("clear")]
