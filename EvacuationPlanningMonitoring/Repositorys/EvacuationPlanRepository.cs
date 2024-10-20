@@ -29,6 +29,16 @@ namespace EvacuationPlanningMonitoring.Repositorys
             }
         }
 
+        public async Task ClearPlan()
+        {
+            var plans = await GetQueryable().ToListAsync();
+            foreach (var plan in plans)
+            {
+                Delete(plan);
+            }
+            await SaveChangesAsync();
+        }
+
         public async Task<List<EvacuationPlanModel>> GetPlan()
         {
            var plans = await GetQueryable().Where(x => x.Status != EvacuationPlanStatus.Done).ToListAsync();

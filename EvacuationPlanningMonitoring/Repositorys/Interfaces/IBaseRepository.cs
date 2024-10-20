@@ -10,5 +10,6 @@ namespace EvacuationPlanningMonitoring.Repositorys
         void Update(TEntity entity);
         Task<TEntity?> FindFirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken);
         Task SaveChangesAsync();
+        void Delete(TEntity entity);
     }
 }

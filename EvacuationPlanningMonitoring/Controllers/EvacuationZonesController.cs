@@ -18,7 +18,7 @@ namespace EvacuationPlanningMonitoring.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(EvacuationZoneDTO zone)
+        public async Task<IActionResult> Create(List<EvacuationZoneDTO> zones)
         {
             await _evacuationService.Create(zone);
             return Ok();

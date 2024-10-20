@@ -40,5 +40,10 @@ namespace EvacuationPlanningMonitoring.Repositorys
         {
             _context.Entry(entity).State = EntityState.Modified;
         }
+
+        public void Delete(TEntity entity)
+        {
+            _context.Set<TEntity>().Remove(entity);
+        }
     }
 }

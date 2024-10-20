@@ -15,18 +15,23 @@ namespace EvacuationPlanningMonitoring.Services
             _evacuationService= evacuationService;
         }
 
-        public async Task Create(VehicleDTO vehicleDTO)
+        public async Task Create(List<VehicleDTO> vehicleDTOs)
         {
-            var vehicle = new VehicleModel()
+            var vehicles = new List<VehicleModel>();
+            foreach (var vehicleDTO in vehicleDTOs)
             {
-                VehicleID= vehicleDTO.VehicleID,
-                Speed =vehicleDTO.Speed,
-                Capacity= vehicleDTO.Capacity,
-                Type=vehicleDTO.Type,
-                Latitude = vehicleDTO.LocationCoordinates.Latitude,
-                Longitude = vehicleDTO.LocationCoordinates.Longitude
-            };
-            await _vehicleRepository.Create(vehicle);
+                var vehicle = new VehicleModel()
+                {
+                    VehicleID = vehicleDTO.VehicleID,
+                    Speed = vehicleDTO.Speed,
+                    Capacity = vehicleDTO.Capacity,
+                    Type = vehicleDTO.Type,
+                    Latitude = vehicleDTO.LocationCoordinates.Latitude,
+                    Longitude = vehicleDTO.LocationCoordinates.Longitude
+                };
+                vehicles.Add(vehicle);
+            }
+            await _vehicleRepository.Create(vehicles);
             await _evacuationService.GeneratePlan();
         }
     }

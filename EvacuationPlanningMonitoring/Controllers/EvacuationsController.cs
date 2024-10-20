@@ -39,8 +39,9 @@ namespace EvacuationPlanningMonitoring.Controllers
         }
 
         [HttpDelete("clear")]
-        public IActionResult Clear()
+        public async Task<IActionResult> Clear()
         {
+            await _evacuationService.Clear();
             return Ok();
         }
     }

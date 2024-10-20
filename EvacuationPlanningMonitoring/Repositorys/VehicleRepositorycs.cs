@@ -20,9 +20,23 @@ namespace EvacuationPlanningMonitoring.Repositorys
             }
         }
 
-        public async Task Create(VehicleModel vehicle)
+        public async Task ClearVehicle()
         {
-            Add(vehicle);
+            var vehicles = await GetQueryable().ToListAsync();
+            foreach (var vehicle in vehicles)
+            {
+                vehicle.Status = VehicleStatus.Available;
+                Update(vehicle);
+            }
+            await SaveChangesAsync();
+        }
+
+        public async Task Create(List<VehicleModel> vehicles)
+        {
+            foreach (var vehicle in vehicles)
+            {
+                Add(vehicle);
+            }
             await SaveChangesAsync();
         }
 

@@ -8,5 +8,6 @@ namespace EvacuationPlanningMonitoring.Repositorys.Interfaces
         Task<List<EvacuationPlanModel>> GetPlan();
         Task<List<EvacuationPlanModel>> GetPlanInProgress();
         Task<EvacuationPlanModel> ChangeStatusPlan(string zoneId, string vehicle, string status);
+        Task ClearPlan();
     }
 }

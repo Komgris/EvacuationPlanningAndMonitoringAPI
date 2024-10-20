@@ -18,7 +18,7 @@ namespace EvacuationPlanningMonitoring.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(VehicleDTO vehicleDTO)
+        public async Task<IActionResult> Create(List<VehicleDTO> vehicleDTO)
         {
             await _vehicleService.Create(vehicleDTO);
             return Ok();

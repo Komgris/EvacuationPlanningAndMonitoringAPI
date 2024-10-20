@@ -8,9 +8,12 @@ namespace EvacuationPlanningMonitoring.Repositorys
     {
         public EvacuationZoneRepository(AppDbContext dbContext) : base(dbContext) { }
 
-        public async Task Create(EvacuationZoneModel zone)
+        public async Task Create(List<EvacuationZoneModel> zones)
         {
-            Add(zone);
+            foreach (var zone in zones)
+            {
+                Add(zone);
+            }
             await SaveChangesAsync();
         }
 
@@ -36,6 +39,17 @@ namespace EvacuationPlanningMonitoring.Repositorys
                 Update(zone);
                 await SaveChangesAsync();
             }
+        }
+
+        public async Task ClearZone()
+        {
+            var zones = await GetAll();
+            foreach( var zone in zones )
+            {
+                zone.RemainPeople = 0;
+                Update(zone);
+            }
+            await SaveChangesAsync();
         }
     }
 }
