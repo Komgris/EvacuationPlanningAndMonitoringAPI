@@ -1,6 +1,7 @@
 using EvacuationPlanningMonitoring.Repositorys;
 using EvacuationPlanningMonitoring.Services;
 using Microsoft.EntityFrameworkCore;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,12 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped<IConnectionMultiplexer>(cfg =>
+{
+    IConnectionMultiplexer multiplexer = ConnectionMultiplexer.Connect($"");
+    return multiplexer;
+});
 
 builder.Services.AddMyServices(builder.Configuration);
 builder.Services.AddRepository(builder.Configuration);

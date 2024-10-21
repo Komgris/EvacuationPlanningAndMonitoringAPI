@@ -3,11 +3,13 @@ using EvacuationPlanningMonitoring.Models.DbModels;
 using EvacuationPlanningMonitoring.Models.DTOs;
 using EvacuationPlanningMonitoring.Repositorys.Interfaces;
 using EvacuationPlanningMonitoring.Services.Interfaces;
+using StackExchange.Redis;
 
 namespace EvacuationPlanningMonitoring.Services
 {
     public class EvacuationService : IEvacuationService
     {
+        private readonly IDatabase _database;
         private readonly IEvacuationZoneRepository _zoneRepository;
         private readonly IVehicleRepository _vehicleRepository;
         private readonly IPlanService _planService;
@@ -17,16 +19,19 @@ namespace EvacuationPlanningMonitoring.Services
             IPlanService planService, 
             IVehicleRepository vehicleRepository,
             IEvacuationPlanRepository evacuationPlanRepository,
-            IEvacuationZoneRepository evacuationZoneRepository) 
+            IEvacuationZoneRepository evacuationZoneRepository,
+            IDatabase database) 
         {
             _zoneRepository = zoneRepository;
             _vehicleRepository = vehicleRepository;
             _planService = planService;
             _evacuationPlanRepository= evacuationPlanRepository;
             _evacuationZoneRepository= evacuationZoneRepository;
+            _database = database;
         }
         public async Task Create(List<EvacuationZoneDTO> zoneDtos)
         {
+            var redis = _database.
             var zones = new List<EvacuationZoneModel>();
             foreach (var zoneDto in zoneDtos)
             {
