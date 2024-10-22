@@ -13,11 +13,11 @@ namespace EvacuationPlanningMonitoring.Repositorys
 
             string? dbConStr = default;
             var builderStr = new NpgsqlConnectionStringBuilder();
-            builderStr.Host = "34.34.217.241";
-            builderStr.Database = "evacuation";
+            builderStr.Host = "";
+            builderStr.Database = "";
             builderStr.Port = 5432;
-            builderStr.Username = "postgres";
-            builderStr.Password = "kommuk55";
+            builderStr.Username = "";
+            builderStr.Password = "";
             builderStr.SearchPath = "public";
             builderStr.IncludeErrorDetails = true;
             dbConStr = builderStr.ConnectionString;
