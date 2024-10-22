@@ -14,17 +14,20 @@ namespace EvacuationPlanningMonitoring.Services
         private readonly IPlanService _planService;
         private readonly IEvacuationPlanRepository _evacuationPlanRepository;
         private readonly IEvacuationZoneRepository _evacuationZoneRepository;
+        private readonly IRedisService _redisService;
         public EvacuationService(IEvacuationZoneRepository zoneRepository,
             IPlanService planService,
             IVehicleRepository vehicleRepository,
             IEvacuationPlanRepository evacuationPlanRepository,
-            IEvacuationZoneRepository evacuationZoneRepository)
+            IEvacuationZoneRepository evacuationZoneRepository,
+            IRedisService redisService)
         {
             _zoneRepository = zoneRepository;
             _vehicleRepository = vehicleRepository;
             _planService = planService;
             _evacuationPlanRepository = evacuationPlanRepository;
             _evacuationZoneRepository = evacuationZoneRepository;
+            _redisService = redisService;
         }
         public async Task Create(List<EvacuationZoneDTO> zoneDtos)
         {
@@ -73,6 +76,21 @@ namespace EvacuationPlanningMonitoring.Services
             return planDtos;
         }
 
+        public async Task<List<EvacuationStatusDTO>> GetStatusCache()
+        {
+            var statusCahce = await _redisService.GetAsync<List<EvacuationStatusDTO>>("status");
+            if (statusCahce != null && statusCahce.Count > 0)
+            {
+                return statusCahce;
+            }
+            else
+            {
+                var status = await GetStatus();
+                await _redisService.SetAsync<List<EvacuationStatusDTO>>("status", status, TimeSpan.FromHours(1));
+                return status;
+            }
+        }
+
         public async Task<List<EvacuationStatusDTO>> GetStatus()
         {
             var zones = await _evacuationZoneRepository.GetAll();
@@ -111,7 +129,10 @@ namespace EvacuationPlanningMonitoring.Services
                     //remove remain people
                     await _evacuationZoneRepository.EvcuationDone(plan);
                     break;
+            
             }
+            var statusList = await GetStatus();
+            await _redisService.SetAsync<List<EvacuationStatusDTO>>("status", statusList, TimeSpan.FromHours(1));
         }
 
         public async Task Clear()

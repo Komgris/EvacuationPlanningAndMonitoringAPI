@@ -8,10 +8,10 @@ namespace EvacuationPlanningMonitoring.Services
     {
         private readonly IConnectionMultiplexer _connectionMultiplexer;
         private readonly IDatabase _db;
-        public RedisService(IConnectionMultiplexer connectionMultiplexer, IDatabase db) 
+        public RedisService(IConnectionMultiplexer connectionMultiplexer) 
         { 
             _connectionMultiplexer = connectionMultiplexer;
-            _db = db;
+            _db = connectionMultiplexer.GetDatabase();
         }
         public async Task<T?> GetAsync<T>(string key)
         {

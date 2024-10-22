@@ -24,7 +24,12 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddScoped<IConnectionMultiplexer>(cfg =>
 {
-    IConnectionMultiplexer multiplexer = ConnectionMultiplexer.Connect($"");
+    var redisConnectionString = builder.Configuration.GetConnectionString("RedisConnection");
+    if (string.IsNullOrEmpty(redisConnectionString))
+    {
+        redisConnectionString = Environment.GetEnvironmentVariable("RedisConnection");
+    }
+    IConnectionMultiplexer multiplexer = ConnectionMultiplexer.Connect(redisConnectionString);
     return multiplexer;
 });
 

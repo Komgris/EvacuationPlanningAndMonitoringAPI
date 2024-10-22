@@ -28,7 +28,7 @@ namespace EvacuationPlanningMonitoring.Controllers
         [HttpGet("status")]
         public async Task<IActionResult> GetStatus()
         {
-            var status = await _evacuationService.GetStatus();
+            var status = await _evacuationService.GetStatusCache();
             return Ok(new
                 BaseResponse<List<EvacuationStatusDTO>>()
             {
