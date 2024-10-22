@@ -18,7 +18,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     {
         connectionString = Environment.GetEnvironmentVariable("DefaultConnection");
     }
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+    options.UseNpgsql(connectionString);
 });
 
 builder.Services.AddMyServices(builder.Configuration);
