@@ -1,9 +1,11 @@
 ﻿using EvacuationPlanningMonitoring.Models.DbModels;
 using EvacuationPlanningMonitoring.Models.DTOs;
+using EvacuationPlanningMonitoring.Models.DTOs.Base;
 using EvacuationPlanningMonitoring.Repositorys.Interfaces;
 using EvacuationPlanningMonitoring.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace EvacuationPlanningMonitoring.Controllers
 {
@@ -21,7 +23,11 @@ namespace EvacuationPlanningMonitoring.Controllers
         public async Task<IActionResult> Create(List<VehicleDTO> vehicleDTO)
         {
             await _vehicleService.Create(vehicleDTO);
-            return Ok();
+            return Ok(new BaseResponse<List<EvacuationStatusDTO>>()
+            {
+                IsSuccess = true,
+                StatusCode = (int)HttpStatusCode.OK
+            });
         }
     }
 }

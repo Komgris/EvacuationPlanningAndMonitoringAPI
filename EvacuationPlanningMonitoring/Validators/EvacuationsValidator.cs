@@ -17,18 +17,18 @@ namespace EvacuationPlanningMonitoring.Validators
 
         public async Task<List<string>> IsValidUpdateStatus(UpdateEvcuationStatusDto status)
         {
-            var errorStr = string.Empty;
+            var errorList = new List<string>();
             if (string.IsNullOrEmpty(status.ZoneID))
             {
-                errorStr += "ZoneID Must be Provide" + Environment.NewLine;
+                errorList.Add("ZoneID Must be Provide");
             }
             if (string.IsNullOrEmpty(status.VehicleID))
             {
-                errorStr += "VehicleID Must be Provide" + Environment.NewLine;
+                errorList.Add("VehicleID Must be Provide");
             }
-            if (!string.IsNullOrEmpty(errorStr))
+            if (errorList.Count > 0)
             {
-                return errorStr;
+                return errorList;
             }
             else
             {
@@ -42,18 +42,18 @@ namespace EvacuationPlanningMonitoring.Validators
                 var vehicle = await _vehicleRepository.FindFirstOrDefaultAsync(x => x.VehicleID == status.VehicleID);
                 if (zone == null)
                 {
-                    errorStr += "ZoneID Not Found" + Environment.NewLine;
+                    errorList.Add("ZoneID Not Found");
                 }
                 if (vehicle == null)
                 {
-                    errorStr += "VehicleID Not Found" + Environment.NewLine;
+                    errorList.Add("VehicleID Not Found");
                 }
                 if (!statusList.Contains(status.Status))
                 {
-                    errorStr += "Status Must be" + String.Join(", ", statusList) + Environment.NewLine;
+                    errorList.Add("Status Must be " + String.Join(", ", statusList));
                 }
             }
-            return errorStr;
+            return errorList;
         }
 
         public List<string> IsValidZones(List<EvacuationZoneDTO> zones)
