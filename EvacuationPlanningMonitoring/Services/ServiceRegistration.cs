@@ -14,6 +14,8 @@ namespace EvacuationPlanningMonitoring.Services
             //validator
             services.AddScoped<IEvacuationsValidator, EvacuationsValidator>();
             services.AddScoped<IVehiclesValidator, VehiclesValidator>();
+            //redis
+            services.AddScoped<IRedisService, IRedisService>();
         }
     }
 }
