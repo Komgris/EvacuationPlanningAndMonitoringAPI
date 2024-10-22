@@ -1,24 +1,25 @@
-FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /app
+
+ARG Configuration=Release
 EXPOSE 80
 EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
-ARG BUILD_CONFIGURATION=Release
-WORKDIR /src
-# copy csproj and restore as distinct layers *.csproj ./
-COPY ["EvacuationPlanningMonitoring/EvacuationPlanningMonitoring.csproj", "EvacuationPlanningMonitoring/"]
-RUN dotnet restore "EvacuationPlanningMonitoring/EvacuationPlanningMonitoring.csproj"
-# copy everything else and build
-COPY . .
-WORKDIR "/src/EvacuationPlanningMonitoring"
-RUN dotnet build "EvacuationPlanningMonitoring.csproj" -c $BUILD_CONFIGURATION -o /app/build
+COPY *.sln .
+COPY EvacuationPlanningMonitoring/EvacuationPlanningMonitoring.csproj ./EvacuationPlanningMonitoring/
 
-FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "EvacuationPlanningMonitoring.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet restore ./EvacuationPlanningMonitoring/EvacuationPlanningMonitoring.csproj
 
-FROM base AS final
+COPY EvacuationPlanningMonitoring/. ./EvacuationPlanningMonitoring/
+
+RUN dotnet build ./EvacuationPlanningMonitoring/EvacuationPlanningMonitoring.csproj -c ${Configuration} --no-restore
+
+RUN dotnet publish ./EvacuationPlanningMonitoring/EvacuationPlanningMonitoring.csproj -c ${Configuration} -o /app/publish --no-build
+
+FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS runtime
+
 WORKDIR /app
-COPY --from=publish /app/publish .
+RUN ls -la
+
+COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "EvacuationPlanningMonitoring.dll"]
