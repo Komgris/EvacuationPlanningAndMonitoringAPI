@@ -4,6 +4,7 @@ WORKDIR /app
 ARG Configuration=Release
 EXPOSE 80
 EXPOSE 443
+
 COPY . .
 RUN dotnet restore
 
