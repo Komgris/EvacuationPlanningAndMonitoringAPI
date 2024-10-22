@@ -1,4 +1,6 @@
 ﻿using EvacuationPlanningMonitoring.Services.Interfaces;
+using EvacuationPlanningMonitoring.Validators;
+using EvacuationPlanningMonitoring.Validators.Interfaces;
 
 namespace EvacuationPlanningMonitoring.Services
 {
@@ -9,6 +11,8 @@ namespace EvacuationPlanningMonitoring.Services
             services.AddScoped<IPlanService, PlanService>();
             services.AddScoped<IVehicleService, VehicleService>();
             services.AddScoped<IEvacuationService, EvacuationService>();
+            //validator
+            services.AddScoped<IEvacuationsValidator, EvacuationsValidator>();
         }
     }
 }

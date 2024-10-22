@@ -3,6 +3,7 @@ using EvacuationPlanningMonitoring.Models.DbModels;
 using EvacuationPlanningMonitoring.Models.DTOs;
 using EvacuationPlanningMonitoring.Repositorys.Interfaces;
 using EvacuationPlanningMonitoring.Services.Interfaces;
+using EvacuationPlanningMonitoring.Validators.Interfaces;
 
 namespace EvacuationPlanningMonitoring.Services
 {
@@ -13,17 +14,17 @@ namespace EvacuationPlanningMonitoring.Services
         private readonly IPlanService _planService;
         private readonly IEvacuationPlanRepository _evacuationPlanRepository;
         private readonly IEvacuationZoneRepository _evacuationZoneRepository;
-        public EvacuationService(IEvacuationZoneRepository zoneRepository, 
-            IPlanService planService, 
+        public EvacuationService(IEvacuationZoneRepository zoneRepository,
+            IPlanService planService,
             IVehicleRepository vehicleRepository,
             IEvacuationPlanRepository evacuationPlanRepository,
-            IEvacuationZoneRepository evacuationZoneRepository) 
+            IEvacuationZoneRepository evacuationZoneRepository)
         {
             _zoneRepository = zoneRepository;
             _vehicleRepository = vehicleRepository;
             _planService = planService;
-            _evacuationPlanRepository= evacuationPlanRepository;
-            _evacuationZoneRepository= evacuationZoneRepository;
+            _evacuationPlanRepository = evacuationPlanRepository;
+            _evacuationZoneRepository = evacuationZoneRepository;
         }
         public async Task Create(List<EvacuationZoneDTO> zoneDtos)
         {
@@ -79,13 +80,13 @@ namespace EvacuationPlanningMonitoring.Services
             var status = new List<EvacuationStatusDTO>();
             foreach (var zone in zones)
             {
-                var inprogressPeople = plans.Where(x => x.ZoneID == zone.ZoneID).Sum(x=>x.NumberOfPeople);
+                var inprogressPeople = plans.Where(x => x.ZoneID == zone.ZoneID).Sum(x => x.NumberOfPeople);
                 status.Add(new EvacuationStatusDTO()
                 {
-                    ZoneID= zone.ZoneID,
+                    ZoneID = zone.ZoneID,
                     TotalEvacuated = zone.RemainPeople - zone.NumberOfPeople,
-                    EvacuatingPeople= inprogressPeople,
-                    RemainPeople= zone.RemainPeople,
+                    EvacuatingPeople = inprogressPeople,
+                    RemainPeople = zone.RemainPeople,
                     IsEvacuatedComplete = zone.RemainPeople == 0
                 });
             }
@@ -94,8 +95,8 @@ namespace EvacuationPlanningMonitoring.Services
 
         public async Task UpdateStatus(UpdateEvcuationStatusDto status)
         {
-           switch (status.Status)
-           {
+            switch (status.Status)
+            {
                 case EvacuationPlanStatus.InProgress:
                     //change status plan to inprogress
                     await _evacuationPlanRepository.ChangeStatusPlan(status.ZoneID, status.VehicleID, EvacuationPlanStatus.InProgress);
@@ -110,7 +111,7 @@ namespace EvacuationPlanningMonitoring.Services
                     //remove remain people
                     await _evacuationZoneRepository.EvcuationDone(plan);
                     break;
-           }
+            }
         }
 
         public async Task Clear()
