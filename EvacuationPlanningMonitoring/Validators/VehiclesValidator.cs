@@ -33,7 +33,7 @@ namespace EvacuationPlanningMonitoring.Validators
             {
                 errResponse.Add(index + " : Speed must more than 0");
             }
-            if (IsValidCoordinates(vehicle.LocationCoordinates.Latitude, vehicle.LocationCoordinates.Longitude))
+            if (!IsValidCoordinates(vehicle.LocationCoordinates.Latitude, vehicle.LocationCoordinates.Longitude))
             {
                 errResponse.Add(index + " : Invalid Latitude Or Longitude");
             }

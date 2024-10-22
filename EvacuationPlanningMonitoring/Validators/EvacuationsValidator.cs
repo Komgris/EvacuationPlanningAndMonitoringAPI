@@ -83,7 +83,7 @@ namespace EvacuationPlanningMonitoring.Validators
             {
                 errorList.Add(index + " : Invalid ZoneID");
             }
-            if (IsValidCoordinates(zone.LocationCoordinates.Latitude, zone.LocationCoordinates.Longitude))
+            if (!IsValidCoordinates(zone.LocationCoordinates.Latitude, zone.LocationCoordinates.Longitude))
             {
                 errorList.Add(index + " : Invalid Latitude Or Longitude");
             }
