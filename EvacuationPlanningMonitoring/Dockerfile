@@ -17,6 +17,7 @@ FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS runtime
 WORKDIR /app
 RUN ls -la
 
+
 COPY --from=build /app/publish .
 
 # Set the entry point for the application
