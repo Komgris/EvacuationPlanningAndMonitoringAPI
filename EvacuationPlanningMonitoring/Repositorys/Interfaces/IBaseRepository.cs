@@ -8,7 +8,7 @@ namespace EvacuationPlanningMonitoring.Repositorys
         IQueryable<TEntity> GetQueryable();
         TEntity Add(TEntity entity);
         void Update(TEntity entity);
-        Task<TEntity?> FindFirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken);
+        Task<TEntity?> FindFirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate);
         Task SaveChangesAsync();
         void Delete(TEntity entity);
     }

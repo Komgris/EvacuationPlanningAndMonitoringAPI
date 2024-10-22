@@ -31,9 +31,9 @@ namespace EvacuationPlanningMonitoring.Repositorys
             return _context.SaveChangesAsync();
         }
 
-        public async Task<TEntity?> FindFirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken)
+        public async Task<TEntity?> FindFirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate)
         {
-            return await _context.Set<TEntity>().FirstOrDefaultAsync(predicate, cancellationToken: cancellationToken);
+            return await _context.Set<TEntity>().FirstOrDefaultAsync(predicate);
         }
 
         public void Update(TEntity entity)

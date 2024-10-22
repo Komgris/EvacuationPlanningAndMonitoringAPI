@@ -3,35 +3,31 @@ using EvacuationPlanningMonitoring.Models.DbModels;
 using EvacuationPlanningMonitoring.Models.DTOs;
 using EvacuationPlanningMonitoring.Repositorys.Interfaces;
 using EvacuationPlanningMonitoring.Services.Interfaces;
-using StackExchange.Redis;
+using EvacuationPlanningMonitoring.Validators.Interfaces;
 
 namespace EvacuationPlanningMonitoring.Services
 {
     public class EvacuationService : IEvacuationService
     {
-        private readonly IDatabase _database;
         private readonly IEvacuationZoneRepository _zoneRepository;
         private readonly IVehicleRepository _vehicleRepository;
         private readonly IPlanService _planService;
         private readonly IEvacuationPlanRepository _evacuationPlanRepository;
         private readonly IEvacuationZoneRepository _evacuationZoneRepository;
-        public EvacuationService(IEvacuationZoneRepository zoneRepository, 
-            IPlanService planService, 
+        public EvacuationService(IEvacuationZoneRepository zoneRepository,
+            IPlanService planService,
             IVehicleRepository vehicleRepository,
             IEvacuationPlanRepository evacuationPlanRepository,
-            IEvacuationZoneRepository evacuationZoneRepository,
-            IDatabase database) 
+            IEvacuationZoneRepository evacuationZoneRepository)
         {
             _zoneRepository = zoneRepository;
             _vehicleRepository = vehicleRepository;
             _planService = planService;
-            _evacuationPlanRepository= evacuationPlanRepository;
-            _evacuationZoneRepository= evacuationZoneRepository;
-            _database = database;
+            _evacuationPlanRepository = evacuationPlanRepository;
+            _evacuationZoneRepository = evacuationZoneRepository;
         }
         public async Task Create(List<EvacuationZoneDTO> zoneDtos)
         {
-            var redis = _database.
             var zones = new List<EvacuationZoneModel>();
             foreach (var zoneDto in zoneDtos)
             {
@@ -84,13 +80,13 @@ namespace EvacuationPlanningMonitoring.Services
             var status = new List<EvacuationStatusDTO>();
             foreach (var zone in zones)
             {
-                var inprogressPeople = plans.Where(x => x.ZoneID == zone.ZoneID).Sum(x=>x.NumberOfPeople);
+                var inprogressPeople = plans.Where(x => x.ZoneID == zone.ZoneID).Sum(x => x.NumberOfPeople);
                 status.Add(new EvacuationStatusDTO()
                 {
-                    ZoneID= zone.ZoneID,
+                    ZoneID = zone.ZoneID,
                     TotalEvacuated = zone.RemainPeople - zone.NumberOfPeople,
-                    EvacuatingPeople= inprogressPeople,
-                    RemainPeople= zone.RemainPeople,
+                    EvacuatingPeople = inprogressPeople,
+                    RemainPeople = zone.RemainPeople,
                     IsEvacuatedComplete = zone.RemainPeople == 0
                 });
             }
@@ -99,8 +95,8 @@ namespace EvacuationPlanningMonitoring.Services
 
         public async Task UpdateStatus(UpdateEvcuationStatusDto status)
         {
-           switch (status.Status)
-           {
+            switch (status.Status)
+            {
                 case EvacuationPlanStatus.InProgress:
                     //change status plan to inprogress
                     await _evacuationPlanRepository.ChangeStatusPlan(status.ZoneID, status.VehicleID, EvacuationPlanStatus.InProgress);
@@ -115,7 +111,7 @@ namespace EvacuationPlanningMonitoring.Services
                     //remove remain people
                     await _evacuationZoneRepository.EvcuationDone(plan);
                     break;
-           }
+            }
         }
 
         public async Task Clear()
