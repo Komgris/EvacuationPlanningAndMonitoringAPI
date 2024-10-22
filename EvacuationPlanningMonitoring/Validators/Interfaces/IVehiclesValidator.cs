@@ -2,8 +2,8 @@
 
 namespace EvacuationPlanningMonitoring.Validators.Interfaces
 {
-    public interface IVehiclesValidator
+    public interface IVehiclesValidator : IBaseValidator
     {
-        List<string> IsValidVehicles(List<EvacuationZoneDTO> zones);
+        List<string> IsValidVehicles(List<VehicleDTO> zones);
     }
 }

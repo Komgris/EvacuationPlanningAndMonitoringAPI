@@ -5,7 +5,7 @@ using EvacuationPlanningMonitoring.Validators.Interfaces;
 
 namespace EvacuationPlanningMonitoring.Validators
 {
-    public class EvacuationsValidator : IEvacuationsValidator
+    public class EvacuationsValidator : BaseValidator,IEvacuationsValidator
     {
         private readonly IEvacuationZoneRepository _zoneRepository;
         private readonly IVehicleRepository _vehicleRepository;
@@ -88,11 +88,6 @@ namespace EvacuationPlanningMonitoring.Validators
                 errorList.Add(index + " : Invalid Latitude Or Longitude");
             }
             return errorList;
-        }
-
-        public bool IsValidCoordinates(double latitude, double longitude)
-        {
-            return (latitude >= -90 && latitude <= 90) && (longitude >= -180 && longitude <= 180);
         }
     }
 }

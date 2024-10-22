@@ -13,6 +13,7 @@ namespace EvacuationPlanningMonitoring.Services
             services.AddScoped<IEvacuationService, EvacuationService>();
             //validator
             services.AddScoped<IEvacuationsValidator, EvacuationsValidator>();
+            services.AddScoped<IVehiclesValidator, VehiclesValidator>();
         }
     }
 }
