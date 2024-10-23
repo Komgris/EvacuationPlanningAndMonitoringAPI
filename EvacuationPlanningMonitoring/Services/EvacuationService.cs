@@ -46,11 +46,11 @@ namespace EvacuationPlanningMonitoring.Services
                 zones.Add(zone);
             }
             await _zoneRepository.Create(zones);
+            await SetStatusCache();
         }
 
-        public async Task<EvacuationGeneratePlanDTO> GeneratePlan()
+        public async Task<List<string>> GeneratePlan()
         {
-            var incompletePlan = new List<EvacuationPlanDTO>();
             var zones = await _zoneRepository.GetNotCompleteZone();
             var vehicles = await _vehicleRepository.GetAvaiableVehicle();
             var alreadyPlan = await _evacuationPlanRepository.GetPlanInProgress();
@@ -60,25 +60,7 @@ namespace EvacuationPlanningMonitoring.Services
             {
                 await _evacuationPlanRepository.SavePlan(plans);
             }
-            else
-            {
-                foreach (var plan in plans)
-                {
-                    incompletePlan.Add(new EvacuationPlanDTO()
-                    {
-                        ZoneID = plan.ZoneID,
-                        VehicleID = plan.VehicleID,
-                        Message = plan.Message,
-                        ETA = plan.ETAMin + " minutes",
-                        NumberOfPeople = plan.NumberOfPeople,
-                    });
-                }
-            }
-            return new EvacuationGeneratePlanDTO() 
-            {
-                InCompletePlan = incompletePlan,
-                ErrorList= validatePlans
-            };
+            return validatePlans;
         }
 
         public async Task<List<EvacuationPlanDTO>> GetPlan()
@@ -154,8 +136,7 @@ namespace EvacuationPlanningMonitoring.Services
                     break;
             
             }
-            var statusList = await GetStatus();
-            await _redisService.SetAsync<List<EvacuationStatusDTO>>("status", statusList, TimeSpan.FromHours(1));
+            await SetStatusCache();
         }
 
         public async Task Clear()
@@ -168,6 +149,12 @@ namespace EvacuationPlanningMonitoring.Services
             await _evacuationZoneRepository.ClearZone();
             //clear redis
             await _redisService.RemoveAsync("status");
+        }
+
+        private async Task SetStatusCache()
+        {
+            var statusList = await GetStatus();
+            await _redisService.SetAsync<List<EvacuationStatusDTO>>("status", statusList, TimeSpan.FromHours(1));
         }
     }
 }

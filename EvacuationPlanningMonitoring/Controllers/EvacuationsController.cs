@@ -42,7 +42,7 @@ namespace EvacuationPlanningMonitoring.Controllers
         public async Task<IActionResult> Plan()
         {
             var validatePlan = await _evacuationService.GeneratePlan();
-            if (validatePlan.ErrorList.Count == 0)
+            if (validatePlan.Count == 0)
             {
                 var plans = await _evacuationService.GetPlan();
                 return Ok(new
@@ -56,10 +56,9 @@ namespace EvacuationPlanningMonitoring.Controllers
             else
             {
                 return BadRequest(
-                new BaseResponse<List<EvacuationPlanDTO>>()
+                new BaseResponse()
                 {
                     IsSuccess = false,
-                    Data = validatePlan.InCompletePlan,
                     Message = String.Join(", ", validatePlan),
                     StatusCode = (int)HttpStatusCode.BadRequest
                 });
