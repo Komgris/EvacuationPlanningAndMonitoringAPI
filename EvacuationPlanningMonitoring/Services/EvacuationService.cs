@@ -48,19 +48,37 @@ namespace EvacuationPlanningMonitoring.Services
             await _zoneRepository.Create(zones);
         }
 
-        public async Task<List<string>> GeneratePlan()
+        public async Task<EvacuationGeneratePlanDTO> GeneratePlan()
         {
-            var validatePlans = new List<string>();
+            var incompletePlan = new List<EvacuationPlanDTO>();
             var zones = await _zoneRepository.GetNotCompleteZone();
             var vehicles = await _vehicleRepository.GetAvaiableVehicle();
             var alreadyPlan = await _evacuationPlanRepository.GetPlanInProgress();
             var plans = _planService.GeneratePlan(vehicles, zones, alreadyPlan);
-            validatePlans = _planService.ValidateGeneratePlan(plans, zones, alreadyPlan);
+            var validatePlans = _planService.ValidateGeneratePlan(plans, zones, alreadyPlan);
             if (validatePlans.Count == 0)
             {
                 await _evacuationPlanRepository.SavePlan(plans);
             }
-            return validatePlans;
+            else
+            {
+                foreach (var plan in plans)
+                {
+                    incompletePlan.Add(new EvacuationPlanDTO()
+                    {
+                        ZoneID = plan.ZoneID,
+                        VehicleID = plan.VehicleID,
+                        Message = plan.Message,
+                        ETA = plan.ETAMin + " minutes",
+                        NumberOfPeople = plan.NumberOfPeople,
+                    });
+                }
+            }
+            return new EvacuationGeneratePlanDTO() 
+            {
+                InCompletePlan = incompletePlan,
+                ErrorList= validatePlans
+            };
         }
 
         public async Task<List<EvacuationPlanDTO>> GetPlan()
