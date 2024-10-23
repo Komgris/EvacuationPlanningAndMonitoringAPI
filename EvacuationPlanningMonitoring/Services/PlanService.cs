@@ -10,7 +10,7 @@ namespace EvacuationPlanningMonitoring.Services
         {
             var helperService = new HelperService();
             var plans = new List<EvacuationPlanModel>();
-            var sortedZones = evacuationZones.OrderByDescending(x => x.UrgencyLevel).ToList();
+            var sortedZones = evacuationZones.OrderByDescending(x => x.UrgencyLevel).ThenBy(x=>x.ID).ToList();
             var sortedVehicle = vehicles.OrderByDescending(x => x.Capacity).ToList();
             foreach (var zone in sortedZones)
             {
