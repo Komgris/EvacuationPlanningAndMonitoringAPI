@@ -122,7 +122,7 @@ namespace EvacuationPlanningMonitoring.Services
                 status.Add(new EvacuationStatusDTO()
                 {
                     ZoneID = zone.ZoneID,
-                    TotalEvacuated = zone.RemainPeople - zone.NumberOfPeople,
+                    TotalEvacuated = zone.NumberOfPeople - zone.RemainPeople,
                     EvacuatingPeople = inprogressPeople,
                     RemainPeople = zone.RemainPeople,
                     IsEvacuatedComplete = zone.RemainPeople == 0
