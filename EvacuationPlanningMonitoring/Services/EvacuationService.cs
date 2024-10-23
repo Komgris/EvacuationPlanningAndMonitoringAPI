@@ -166,6 +166,8 @@ namespace EvacuationPlanningMonitoring.Services
             await _vehicleRepository.ClearVehicle();
             //clear zone
             await _evacuationZoneRepository.ClearZone();
+            //clear redis
+            await _redisService.RemoveAsync("status");
         }
     }
 }
