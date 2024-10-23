@@ -32,7 +32,6 @@ namespace EvacuationPlanningMonitoring.Services
                 vehicles.Add(vehicle);
             }
             await _vehicleRepository.Create(vehicles);
-            await _evacuationService.GeneratePlan();
         }
     }
 }

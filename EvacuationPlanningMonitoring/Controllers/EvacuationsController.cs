@@ -41,14 +41,28 @@ namespace EvacuationPlanningMonitoring.Controllers
         [HttpPost("plan")]
         public async Task<IActionResult> Plan()
         {
-            var plans = await _evacuationService.GetPlan();
-            return Ok(new
-                BaseResponse<List<EvacuationPlanDTO>>()
+            var validatePlan = await _evacuationService.GeneratePlan();
+            if (validatePlan.Count == 0)
             {
-                IsSuccess = true,
-                Data = plans,
-                StatusCode = (int)HttpStatusCode.OK
-            });
+                var plans = await _evacuationService.GetPlan();
+                return Ok(new
+                    BaseResponse<List<EvacuationPlanDTO>>()
+                {
+                    IsSuccess = true,
+                    Data = plans,
+                    StatusCode = (int)HttpStatusCode.OK
+                });
+            }
+            else
+            {
+                return BadRequest(
+                new BaseResponse()
+                {
+                    IsSuccess = false,
+                    Message = String.Join(", ", validatePlan),
+                    StatusCode = (int)HttpStatusCode.BadRequest
+                });
+            }    
         }
 
         [HttpPut("update")]

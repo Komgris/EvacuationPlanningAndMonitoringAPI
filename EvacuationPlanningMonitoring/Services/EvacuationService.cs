@@ -46,16 +46,21 @@ namespace EvacuationPlanningMonitoring.Services
                 zones.Add(zone);
             }
             await _zoneRepository.Create(zones);
-            await GeneratePlan();
         }
 
-        public async Task GeneratePlan()
+        public async Task<List<string>> GeneratePlan()
         {
+            var validatePlans = new List<string>();
             var zones = await _zoneRepository.GetNotCompleteZone();
             var vehicles = await _vehicleRepository.GetAvaiableVehicle();
             var alreadyPlan = await _evacuationPlanRepository.GetPlanInProgress();
             var plans = _planService.GeneratePlan(vehicles, zones, alreadyPlan);
-            await _evacuationPlanRepository.SavePlan(plans);
+            validatePlans = _planService.ValidateGeneratePlan(plans, zones, alreadyPlan);
+            if (validatePlans.Count == 0)
+            {
+                await _evacuationPlanRepository.SavePlan(plans);
+            }
+            return validatePlans;
         }
 
         public async Task<List<EvacuationPlanDTO>> GetPlan()
@@ -143,7 +148,6 @@ namespace EvacuationPlanningMonitoring.Services
             await _vehicleRepository.ClearVehicle();
             //clear zone
             await _evacuationZoneRepository.ClearZone();
-            await GeneratePlan();
         }
     }
 }
