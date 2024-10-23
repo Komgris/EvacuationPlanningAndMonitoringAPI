@@ -19,7 +19,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     {
         connectionString = Environment.GetEnvironmentVariable("DefaultConnection");
     }
-    options.UseNpgsql(connectionString);
+    options.UseNpgsql("User ID=postgres;Password=kommuk55;Host=34.34.217.241;Port=5432;Database=evacuation;Pooling=true;Connection");
 });
 
 builder.Services.AddScoped<IConnectionMultiplexer>(cfg =>
@@ -36,6 +36,8 @@ builder.Services.AddScoped<IConnectionMultiplexer>(cfg =>
 builder.Services.AddMyServices(builder.Configuration);
 builder.Services.AddRepository(builder.Configuration);
 var app = builder.Build();
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+AppContext.SetSwitch("Npgsql.DisableDateTimeInfinityConversions", false);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
