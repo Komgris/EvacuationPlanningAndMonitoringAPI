@@ -19,7 +19,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     {
         connectionString = Environment.GetEnvironmentVariable("DefaultConnection");
     }
-    options.UseNpgsql("User ID=postgres;Password=kommuk55;Host=34.34.217.241;Port=5432;Database=evacuation;Pooling=true;Connection");
+    options.UseNpgsql(connectionString);
 });
 
 builder.Services.AddScoped<IConnectionMultiplexer>(cfg =>
