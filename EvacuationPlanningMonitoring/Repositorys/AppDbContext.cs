@@ -12,6 +12,7 @@ namespace EvacuationPlanningMonitoring.Repositorys
         public DbSet<EvacuationPlanModel> EvacuationPlans { get; set; }
         public DbSet<EvacuationZoneModel> EvacuationZones { get; set; }
         public DbSet<VehicleModel> Vehicles { get; set; }
+        public DbSet<LoggingModel> Logging { get; set; }
     }
 }
 

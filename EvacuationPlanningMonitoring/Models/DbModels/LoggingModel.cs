@@ -4,8 +4,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EvacuationPlanningMonitoring.Models.DbModels
 {
+    [Table("logging")]
     public class LoggingModel
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
         public int ID { get; set; }
         public string VehicleID { get; set; } = string.Empty;
