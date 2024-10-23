@@ -165,7 +165,7 @@ namespace EvacuationPlanningMonitoring.Services
             await _evacuationZoneRepository.ClearZone();
             //clear redis
             await _redisService.RemoveAsync("status");
-            await _loggingRepository.CreateLog(ActionStatus.UpdateStatus, string.Empty, string.Empty, string.Empty);
+            await _loggingRepository.CreateLog(ActionStatus.CreateZone, JsonSerializer.Serialize(new object { }), string.Empty, string.Empty);
         }
 
         private async Task SetStatusCache()
