@@ -1,4 +1,5 @@
 ﻿using EvacuationPlanningMonitoring.Models;
+using EvacuationPlanningMonitoring.Models.DbModels;
 using EvacuationPlanningMonitoring.Models.DTOs;
 using EvacuationPlanningMonitoring.Repositorys.Interfaces;
 using EvacuationPlanningMonitoring.Validators.Interfaces;
@@ -56,36 +57,44 @@ namespace EvacuationPlanningMonitoring.Validators
             return errorList;
         }
 
-        public List<string> IsValidZones(List<EvacuationZoneDTO> zones)
+        public async Task<List<string>> IsValidZones(List<EvacuationZoneDTO> zoneDtos)
         {
+            var zoneIds = zoneDtos.Select(x => x.ZoneID).ToList();
+            var zones = await _zoneRepository.GetAll();
             var errorList = new List<string>();
             var index = 0;
-            foreach (var zone in zones)
+            foreach (var zoneDto in zoneDtos)
             {
-                errorList.AddRange(IsValidZone(zone, index));
+                errorList.AddRange(IsValidZone(zoneDto, zones, index));
                 index++;
             }
             return errorList;
         }
 
-        private List<string> IsValidZone(EvacuationZoneDTO zone, int index)
+        private List<string> IsValidZone(EvacuationZoneDTO zoneDto, List<EvacuationZoneModel> zones, int index)
         {
             var errorList = new List<string>();
-            if (zone.NumberOfPeople <= 0)
+            var zoneDuplicate = zones.Any(x => x.ZoneID == zoneDto.ZoneID);
+            if (string.IsNullOrEmpty(zoneDto.ZoneID.Trim()))
             {
-                errorList.Add(index + " : NumberOfPeople must more than 0");
+                errorList.Add("Invalid ZoneID");
+                return errorList;
             }
-            if (zone.UrgencyLevel>5 || zone.UrgencyLevel<1)
+            if (zoneDuplicate)
             {
-                errorList.Add(index + " : UrgencyLevel must be between 1 and 5");
+                errorList.Add(zoneDto.ZoneID + " : ZoneID is Duplicate");
             }
-            if (string.IsNullOrEmpty(zone.ZoneID.Trim()))
+            if (zoneDto.NumberOfPeople <= 0)
             {
-                errorList.Add(index + " : Invalid ZoneID");
+                errorList.Add(zoneDto.ZoneID + " : NumberOfPeople must more than 0");
             }
-            if (!IsValidCoordinates(zone.LocationCoordinates.Latitude, zone.LocationCoordinates.Longitude))
+            if (zoneDto.UrgencyLevel>5 || zoneDto.UrgencyLevel<1)
             {
-                errorList.Add(index + " : Invalid Latitude Or Longitude");
+                errorList.Add(zoneDto.ZoneID + " : UrgencyLevel must be between 1 and 5");
+            }
+            if (!IsValidCoordinates(zoneDto.LocationCoordinates.Latitude, zoneDto.LocationCoordinates.Longitude))
+            {
+                errorList.Add(zoneDto.ZoneID + " : Invalid Latitude Or Longitude");
             }
             return errorList;
         }

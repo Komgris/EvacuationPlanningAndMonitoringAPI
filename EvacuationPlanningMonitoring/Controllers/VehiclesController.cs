@@ -25,7 +25,7 @@ namespace EvacuationPlanningMonitoring.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(List<VehicleDTO> vehicleDTO)
         {
-            var validateResult = _vehiclesValidator.IsValidVehicles(vehicleDTO);
+            var validateResult = await _vehiclesValidator.IsValidVehicles(vehicleDTO);
             if (validateResult.Count == 0)
             {
                 await _vehicleService.Create(vehicleDTO);

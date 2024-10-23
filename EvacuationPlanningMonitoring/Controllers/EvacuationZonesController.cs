@@ -26,7 +26,7 @@ namespace EvacuationPlanningMonitoring.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(List<EvacuationZoneDTO> zones)
         {
-            var validateResult = _evacuationsValidator.IsValidZones(zones);
+            var validateResult = await _evacuationsValidator.IsValidZones(zones);
             if (validateResult.Count == 0)
             {
                 await _evacuationService.Create(zones);

@@ -4,6 +4,6 @@ namespace EvacuationPlanningMonitoring.Validators.Interfaces
 {
     public interface IVehiclesValidator : IBaseValidator
     {
-        List<string> IsValidVehicles(List<VehicleDTO> zones);
+        Task<List<string>> IsValidVehicles(List<VehicleDTO> vehicleDtos);
     }
 }

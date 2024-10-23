@@ -40,6 +40,12 @@ namespace EvacuationPlanningMonitoring.Repositorys
             await SaveChangesAsync();
         }
 
+        public async Task<List<VehicleModel>> GetAll()
+        {
+            var vehicles = await GetQueryable().ToListAsync();
+            return vehicles;
+        }
+
         public Task<List<VehicleModel>> GetAvaiableVehicle()
         {
             var vehicles = GetQueryable().Where(x => x.Status == VehicleStatus.Available).ToListAsync();
