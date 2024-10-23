@@ -46,8 +46,7 @@ namespace EvacuationPlanningMonitoring.Repositorys
             var zones = await GetAll();
             foreach( var zone in zones )
             {
-                zone.RemainPeople = zone.NumberOfPeople;
-                Update(zone);
+                Delete(zone);
             }
             await SaveChangesAsync();
         }

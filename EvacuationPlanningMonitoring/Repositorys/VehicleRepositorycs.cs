@@ -25,8 +25,7 @@ namespace EvacuationPlanningMonitoring.Repositorys
             var vehicles = await GetQueryable().ToListAsync();
             foreach (var vehicle in vehicles)
             {
-                vehicle.Status = VehicleStatus.Available;
-                Update(vehicle);
+                Delete(vehicle);
             }
             await SaveChangesAsync();
         }
