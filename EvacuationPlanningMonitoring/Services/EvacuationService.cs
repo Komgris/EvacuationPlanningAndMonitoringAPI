@@ -1,9 +1,12 @@
 ﻿using EvacuationPlanningMonitoring.Models;
 using EvacuationPlanningMonitoring.Models.DbModels;
 using EvacuationPlanningMonitoring.Models.DTOs;
+using EvacuationPlanningMonitoring.Repositorys;
 using EvacuationPlanningMonitoring.Repositorys.Interfaces;
 using EvacuationPlanningMonitoring.Services.Interfaces;
 using EvacuationPlanningMonitoring.Validators.Interfaces;
+using System.Numerics;
+using System.Text.Json;
 
 namespace EvacuationPlanningMonitoring.Services
 {
@@ -15,12 +18,14 @@ namespace EvacuationPlanningMonitoring.Services
         private readonly IEvacuationPlanRepository _evacuationPlanRepository;
         private readonly IEvacuationZoneRepository _evacuationZoneRepository;
         private readonly IRedisService _redisService;
+        private readonly ILoggingRepository _loggingRepository;
         public EvacuationService(IEvacuationZoneRepository zoneRepository,
             IPlanService planService,
             IVehicleRepository vehicleRepository,
             IEvacuationPlanRepository evacuationPlanRepository,
             IEvacuationZoneRepository evacuationZoneRepository,
-            IRedisService redisService)
+            IRedisService redisService,
+            ILoggingRepository loggingRepository)
         {
             _zoneRepository = zoneRepository;
             _vehicleRepository = vehicleRepository;
@@ -28,6 +33,7 @@ namespace EvacuationPlanningMonitoring.Services
             _evacuationPlanRepository = evacuationPlanRepository;
             _evacuationZoneRepository = evacuationZoneRepository;
             _redisService = redisService;
+            _loggingRepository = loggingRepository;
         }
         public async Task Create(List<EvacuationZoneDTO> zoneDtos)
         {
@@ -47,6 +53,10 @@ namespace EvacuationPlanningMonitoring.Services
             }
             await _zoneRepository.Create(zones);
             await SetStatusCache();
+
+            var zoneIDs = zones.Select(x => x.ZoneID).ToList();
+            await _loggingRepository.CreateLog(ActionStatus.CreateZone, JsonSerializer.Serialize(zones), String.Join(", ", zoneIDs), string.Empty);
+
         }
 
         public async Task<List<string>> GeneratePlan()
@@ -59,6 +69,11 @@ namespace EvacuationPlanningMonitoring.Services
             if (validatePlans.Count == 0)
             {
                 await _evacuationPlanRepository.SavePlan(plans);
+                await _loggingRepository.CreateLog(ActionStatus.GeneratePlan, JsonSerializer.Serialize(plans), string.Empty, string.Empty);
+            }
+            else
+            {
+                await _loggingRepository.CreateLog(ActionStatus.InCompletePlan, JsonSerializer.Serialize(plans), string.Empty, string.Empty);
             }
             return validatePlans;
         }
@@ -137,6 +152,7 @@ namespace EvacuationPlanningMonitoring.Services
             
             }
             await SetStatusCache();
+            await _loggingRepository.CreateLog(ActionStatus.UpdateStatus, JsonSerializer.Serialize(status), status.VehicleID, status.ZoneID);
         }
 
         public async Task Clear()
@@ -149,6 +165,7 @@ namespace EvacuationPlanningMonitoring.Services
             await _evacuationZoneRepository.ClearZone();
             //clear redis
             await _redisService.RemoveAsync("status");
+            await _loggingRepository.CreateLog(ActionStatus.UpdateStatus, string.Empty, string.Empty, string.Empty);
         }
 
         private async Task SetStatusCache()

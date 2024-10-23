@@ -1,18 +1,20 @@
-﻿using EvacuationPlanningMonitoring.Models.DbModels;
+﻿using EvacuationPlanningMonitoring.Models;
+using EvacuationPlanningMonitoring.Models.DbModels;
 using EvacuationPlanningMonitoring.Models.DTOs;
 using EvacuationPlanningMonitoring.Repositorys.Interfaces;
 using EvacuationPlanningMonitoring.Services.Interfaces;
+using System.Text.Json;
 
 namespace EvacuationPlanningMonitoring.Services
 {
     public class VehicleService : IVehicleService
     {
         private readonly IVehicleRepository _vehicleRepository;
-        private readonly IEvacuationService _evacuationService;
-        public VehicleService(IVehicleRepository vehicleRepository, IEvacuationService evacuationService)
+        private readonly ILoggingRepository _loggingRepository;
+        public VehicleService(IVehicleRepository vehicleRepository, ILoggingRepository loggingRepository)
         {
             _vehicleRepository = vehicleRepository;
-            _evacuationService= evacuationService;
+            _loggingRepository = loggingRepository;
         }
 
         public async Task Create(List<VehicleDTO> vehicleDTOs)
@@ -32,6 +34,9 @@ namespace EvacuationPlanningMonitoring.Services
                 vehicles.Add(vehicle);
             }
             await _vehicleRepository.Create(vehicles);
+            //LOGGING
+            var vehicleIDs= vehicles.Select(x => x.VehicleID).ToList();
+            await _loggingRepository.CreateLog(ActionStatus.CreateVehicle, JsonSerializer.Serialize(vehicles), String.Join(", ", vehicleIDs),"");
         }
     }
 }

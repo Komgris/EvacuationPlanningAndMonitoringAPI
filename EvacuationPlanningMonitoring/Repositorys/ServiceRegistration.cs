@@ -12,6 +12,7 @@ namespace EvacuationPlanningMonitoring.Repositorys
             services.AddScoped<IEvacuationPlanRepository, EvacuationPlanRepository>();
             services.AddScoped<IVehicleRepository, VehicleRepositorycs>();
             services.AddScoped<IEvacuationZoneRepository, EvacuationZoneRepository>();
+            services.AddScoped<ILoggingRepository, LoggingRepository>();
         }
     }
 }

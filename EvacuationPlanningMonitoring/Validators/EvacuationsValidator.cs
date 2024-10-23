@@ -63,6 +63,11 @@ namespace EvacuationPlanningMonitoring.Validators
             var zones = await _zoneRepository.GetAll();
             var errorList = new List<string>();
             var index = 0;
+            var anyDuplicateZoneID = zoneDtos.GroupBy(x => x.ZoneID).Any(g => g.Count() > 1);
+            if (anyDuplicateZoneID)
+            {
+                errorList.Add("ZoneID is Duplicate");
+            }
             foreach (var zoneDto in zoneDtos)
             {
                 errorList.AddRange(IsValidZone(zoneDto, zones, index));

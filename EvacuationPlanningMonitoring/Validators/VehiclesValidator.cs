@@ -2,6 +2,7 @@
 using EvacuationPlanningMonitoring.Models.DTOs;
 using EvacuationPlanningMonitoring.Repositorys.Interfaces;
 using EvacuationPlanningMonitoring.Validators.Interfaces;
+using System.Linq;
 
 namespace EvacuationPlanningMonitoring.Validators
 {
@@ -18,6 +19,11 @@ namespace EvacuationPlanningMonitoring.Validators
 
             var errResponse = new List<string>();
             var index = 0;
+            var anyDuplicateVehicleID = vehicleDtos.GroupBy(x => x.VehicleID).Any(g => g.Count() > 1);
+            if (anyDuplicateVehicleID)
+            {
+                errResponse.Add("VehicleID is Duplicate");
+            }
             foreach (var vehicleDto in vehicleDtos)
             {
                 errResponse.AddRange(IsValidVehicle(vehicleDto, vehicles, index));
@@ -37,7 +43,7 @@ namespace EvacuationPlanningMonitoring.Validators
             }
             if (vehicleDuplicate)
             {
-                errResponse.Add(vehicleDto.VehicleID + " : ZoneID is Duplicate");
+                errResponse.Add(vehicleDto.VehicleID + " : VehicleID is Exists");
             }
             if (vehicleDto.Capacity <= 0)
             {
