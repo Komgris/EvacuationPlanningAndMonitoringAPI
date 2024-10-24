@@ -55,7 +55,7 @@ namespace EvacuationPlanningMonitoring.Services
             await SetStatusCache();
 
             var zoneIDs = zones.Select(x => x.ZoneID).ToList();
-            await _loggingRepository.CreateLog(ActionStatus.CreateZone, JsonSerializer.Serialize(zones), String.Join(", ", zoneIDs), string.Empty);
+            await _loggingRepository.CreateLog(ActionStatus.CreateZone, JsonSerializer.Serialize(zones), string.Empty, String.Join(", ", zoneIDs));
 
         }
 

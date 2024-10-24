@@ -16,10 +16,22 @@ namespace EvacuationPlanningMonitoring.Controllers
     {
         private readonly IVehicleService _vehicleService;
         private readonly IVehiclesValidator _vehiclesValidator;
-        public VehiclesController(IVehicleService vehicleService, IVehiclesValidator vehiclesValidator) 
+        public VehiclesController(IVehicleService vehicleService, IVehiclesValidator vehiclesValidator)
         {
             _vehicleService = vehicleService;
             _vehiclesValidator = vehiclesValidator;
+        }
+        [HttpGet]
+        public async Task<IActionResult> Get()
+        {
+            var vehicles = await _vehicleService.Get();
+            return Ok(new
+               BaseResponse<List<VehicleDTO>>()
+            {
+                IsSuccess = true,
+                Data = vehicles,
+                StatusCode = (int)HttpStatusCode.OK
+            });
         }
 
         [HttpPost]

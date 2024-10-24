@@ -38,5 +38,29 @@ namespace EvacuationPlanningMonitoring.Services
             var vehicleIDs= vehicles.Select(x => x.VehicleID).ToList();
             await _loggingRepository.CreateLog(ActionStatus.CreateVehicle, JsonSerializer.Serialize(vehicles), String.Join(", ", vehicleIDs),"");
         }
+
+        public async Task<List<VehicleDTO>> Get()
+        {
+            var vehicleDtos = new List<VehicleDTO>();
+            var vehicles = await _vehicleRepository.GetAll();
+            foreach (var vehicle in vehicles)
+            {
+                var vehicleDto = new VehicleDTO()
+                {
+                    VehicleID = vehicle.VehicleID,
+                    Speed = vehicle.Speed,
+                    Capacity = vehicle.Capacity,
+                    Type = vehicle.Type,
+                    Status= vehicle.Status,
+                    LocationCoordinates = new LocationCoordinatesDTO()
+                    {
+                        Latitude = vehicle.Latitude,
+                        Longitude = vehicle.Longitude
+                    },
+                };
+                vehicleDtos.Add(vehicleDto);
+            }
+            return vehicleDtos;
+        }
     }
 }

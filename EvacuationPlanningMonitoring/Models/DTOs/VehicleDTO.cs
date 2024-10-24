@@ -7,9 +7,6 @@
         public string Type { get; set; } = string.Empty;
         public LocationCoordinatesDTO LocationCoordinates { get; set; }
         public int Speed { get; set; }
-        public VehicleDTO() 
-        {
-            LocationCoordinates= new LocationCoordinatesDTO();
-        }
+        public string? Status { get; set; }
     }
 }
