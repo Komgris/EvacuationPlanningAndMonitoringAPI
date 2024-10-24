@@ -107,14 +107,16 @@ Creates a new evacuation zone.
 
 **Request Body:**
 ```json
-{
-  "zoneID": "string",
-  "location": {
-    "latitude": 0,
-    "longitude": 0
-  },
-  "description": "string"
-}
+[
+  {
+    "zoneID": "string",
+    "location": {
+      "latitude": 0,
+      "longitude": 0
+    },
+    "description": "string"
+  }
+]
 ```
 
 **Response:**
@@ -122,7 +124,7 @@ Creates a new evacuation zone.
 
 ### Vehicles
 
-#### 1. Add Vehicle
+#### 1. Add Vehicles
 
 **Endpoint:**  
 `POST /api/vehicles`
@@ -132,16 +134,43 @@ Adds a new vehicle to be used in the evacuation process.
 
 **Request Body:**
 ```json
-{
-  "vehicleID": "string",
-  "type": "string",
-  "capacity": 0,
-  "status": "string"
-}
+[
+  {
+    "vehicleID": "string",
+    "type": "string",
+    "capacity": 0,
+    "status": "string"
+  }
+]
 ```
 
 **Response:**
 - `200 OK`: Success
+
+#### 2. Vehicle Status
+
+**Endpoint:**  
+`GET /api/vehicles`
+
+**Description:**  
+Retrieves the current status of all vehicles.
+
+**Response:**
+```json
+[
+    {
+      "vehicleID": "string",
+      "capacity": 0,
+      "type": "string",
+      "locationCoordinates": {
+        "latitude": 0,
+        "longitude": 0
+      },
+      "speed": 0,
+      "status": ""
+    }
+]
+```
 
 ## Technologies Used
 - **Swagger UI:** for API documentation and Integration testing.
