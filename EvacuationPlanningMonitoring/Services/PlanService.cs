@@ -71,7 +71,7 @@ namespace EvacuationPlanningMonitoring.Services
             if (timeBetweenZoneVehicle.Count > 0)
             {
                 var selectedVehicle = new VehicleDistanctCapcityDto();
-                var exactCapacityVehicle = timeBetweenZoneVehicle.First(x => people  >= x.Capacity);
+                var exactCapacityVehicle = timeBetweenZoneVehicle.FirstOrDefault(x => people  >= x.Capacity);
                 if (exactCapacityVehicle != null)
                 {
                     //IF EXACT CAPACITY DELIVERY FIRST
@@ -79,8 +79,8 @@ namespace EvacuationPlanningMonitoring.Services
                 }
                 else
                 {
-                    //IF NOT JUST NEAREST
-                    var nearestVehiclePair = timeBetweenZoneVehicle.First();
+                    //IF NOT, JUST NEAREST
+                    var nearestVehiclePair = timeBetweenZoneVehicle.OrderBy(x=>x.Capacity).First();
                     selectedVehicle = nearestVehiclePair;
                 }
                 var nearestVehicle = vehicles.FirstOrDefault(x => x.VehicleID == selectedVehicle.VehicleID);

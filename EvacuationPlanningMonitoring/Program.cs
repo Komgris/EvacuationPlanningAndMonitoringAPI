@@ -19,7 +19,10 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     {
         connectionString = Environment.GetEnvironmentVariable("DefaultConnection");
     }
-    options.UseNpgsql(connectionString);
+    else
+    {
+        options.UseNpgsql(connectionString);
+    }
 });
 
 builder.Services.AddScoped<IConnectionMultiplexer>(cfg =>
